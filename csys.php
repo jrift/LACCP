@@ -1,98 +1,95 @@
 <?php
-// Define the sales data
-$sales = [
-    ['id' => 1, 'type' => 'cash', 'amount' => 12.44],
-    ['id' => 2, 'type' => 'card', 'amount' => 55.22],
-    ['id' => 3, 'type' => 'cash', 'amount' => 4.98]
-];
+session_start();
+
+// Initialize sales array in session if it doesn't exist
+if (!isset($_SESSION['sales'])) {
+    $_SESSION['sales'] = [
+        ['id' => 1, 'category' => 'Restaurant', 'type' => 'cash', 'amount' => 12.44],
+        ['id' => 2, 'category' => 'Dues', 'type' => 'card', 'amount' => 55.22],
+        ['id' => 3, 'category' => 'Guest Passes', 'type' => 'cash', 'amount' => 4.98]
+    ];
+}
+
+// Handle new sale submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['amount'])) {
+    $newSale = [
+        'id' => count($_SESSION['sales']) + 1,
+        'category' => $_POST['category'],
+        'type' => strtolower($_POST['payment_type']),
+        'amount' => floatval($_POST['amount'])
+    ];
+    $_SESSION['sales'][] = $newSale;
+}
 
 // Calculate totals
-$total_cash = 0;
-$total_card = 0;
-$total_sales = 0;
+$totals = [
+    'categories' => [],
+    'cash' => 0,
+    'card' => 0,
+    'total' => 0
+];
 
-foreach ($sales as $sale) {
-    if ($sale['type'] == 'cash') {
-        $total_cash += $sale['amount'];
-    } else {
-        $total_card += $sale['amount'];
+foreach ($_SESSION['sales'] as $sale) {
+    // Category totals
+    if (!isset($totals['categories'][$sale['category']])) {
+        $totals['categories'][$sale['category']] = 0;
     }
-    $total_sales += $sale['amount'];
+    $totals['categories'][$sale['category']] += $sale['amount'];
+    
+    // Payment type totals
+    if ($sale['type'] === 'cash') {
+        $totals['cash'] += $sale['amount'];
+    } else {
+        $totals['card'] += $sale['amount'];
+    }
+    $totals['total'] += $sale['amount'];
+}
+
+// Display form for new sales
+echo "Add New Sale:\n";
+echo "<form method='post' action=''>\n";
+echo "Amount: $<input type='number' name='amount' step='0.01' required>\n";
+echo "Category: <select name='category' required>\n";
+echo "  <option value='Restaurant'>Restaurant</option>\n";
+echo "  <option value='Dues'>Dues</option>\n";
+echo "  <option value='Guest Passes'>Guest Passes</option>\n";
+echo "</select>\n";
+echo "Payment Type: <select name='payment_type' required>\n";
+echo "  <option value='cash'>Cash</option>\n";
+echo "  <option value='card'>Card</option>\n";
+echo "</select>\n";
+echo "<input type='submit' value='Add Sale'>\n";
+echo "</form>\n\n";
+
+// Display all sales
+echo "All Sales:\n";
+foreach ($_SESSION['sales'] as $sale) {
+    echo "Sale {$sale['id']}: {$sale['category']} - " . 
+         ucfirst($sale['type']) . " - $" . 
+         number_format($sale['amount'], 2) . "\n";
+}
+
+// Display category totals
+echo "\nCategory Totals:\n";
+foreach ($totals['categories'] as $category => $amount) {
+    echo "$category: $" . number_format($amount, 2) . "\n";
+}
+
+// Display payment totals
+echo "\nPayment Totals:\n";
+echo "Cash Sales: $" . number_format($totals['cash'], 2) . "\n";
+echo "Card Sales: $" . number_format($totals['card'], 2) . "\n";
+echo "Total Sales: $" . number_format($totals['total'], 2) . "\n";
+
+// Add reset button
+echo "\n<form method='post' action=''>\n";
+echo "<input type='submit' name='reset' value='Reset All Sales'>\n";
+echo "</form>\n";
+
+// Handle reset
+if (isset($_POST['reset'])) {
+    unset($_SESSION['sales']);
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cash and Credit Card Sales</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        .total-section {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-        .amount {
-            text-align: right;
-        }
-        .type-cash {
-            color: #28a745;
-        }
-        .type-card {
-            color: #007bff;
-        }
-    </style>
-</head>
-<body>
-    <h1>Sales Transactions</h1>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>Sale ID</th>
-                <th>Payment Type</th>
-                <th>Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($sales as $sale): ?>
-            <tr>
-                <td>Sale <?php echo htmlspecialchars($sale['id']); ?></td>
-                <td class="type-<?php echo $sale['type']; ?>">
-                    <?php echo ucfirst(htmlspecialchars($sale['type'])); ?>
-                </td>
-                <td class="amount">$<?php echo number_format($sale['amount'], 2); ?></td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-
-    <div class="total-section">
-        <h2>Sales Summary</h2>
-        <p><strong>Total Cash Sales:</strong> $<?php echo number_format($total_cash, 2); ?></p>
-        <p><strong>Total Credit Card Sales:</strong> $<?php echo number_format($total_card, 2); ?></p>
-        <p><strong>Total Sales:</strong> $<?php echo number_format($total_sales, 2); ?></p>
-    </div>
-</body>
-</html>
