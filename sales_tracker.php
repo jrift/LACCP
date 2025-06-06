@@ -33,49 +33,49 @@ foreach ($_SESSION['sales'] as $sale) {
 }
 
 // Display header
-echo "=== Sales Transaction Report ===\n\n";
+echo "=== Sales Transaction Report ===<br><br>";
 
 // Display all transactions
-echo "All Transactions:\n";
-echo "----------------\n";
+echo "All Transactions:<br>";
+echo "----------------<br>";
 foreach ($_SESSION['sales'] as $sale) {
     echo sprintf(
-        "Transaction #%d\n" .
-        "Category: %s\n" .
-        "Payment Type: %s\n" .
-        "Amount: $%s\n",
+        "Transaction #%d<br>" .
+        "Category: %s<br>" .
+        "Payment Type: %s<br>" .
+        "Amount: $%s<br>",
         $sale['id'],
         $sale['category'],
         ucfirst($sale['type']),
         number_format($sale['amount'], 2)
     );
-    echo "----------------\n";
+    echo "----------------<br>";
 }
 
 // Display category breakdown
-echo "\nCategory Breakdown:\n";
-echo "----------------\n";
+echo "<br>Category Breakdown:<br>";
+echo "----------------<br>";
 foreach ($totals['categories'] as $category => $amount) {
     echo sprintf(
-        "%s: $%s\n",
+        "%s: $%s<br>",
         $category,
         number_format($amount, 2)
     );
 }
 
 // Display payment type totals
-echo "\nPayment Type Totals:\n";
-echo "----------------\n";
+echo "<br>Payment Type Totals:<br>";
+echo "----------------<br>";
 echo sprintf(
-    "Cash Sales: $%s\n" .
-    "Card Sales: $%s\n",
+    "Cash Sales: $%s<br>" .
+    "Card Sales: $%s<br>",
     number_format($totals['cash'], 2),
     number_format($totals['card'], 2)
 );
 
 // Display grand total
-echo "\nGrand Total: $" . number_format($totals['total'], 2) . "\n";
+echo "<br>Grand Total: $" . number_format($totals['total'], 2) . "<br>";
 
 // Display timestamp
-echo "\nReport generated: " . date('Y-m-d H:i:s') . "\n";
+echo "<br>Report generated: " . date('Y-m-d H:i:s') . "<br>";
 ?> 

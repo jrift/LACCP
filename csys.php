@@ -46,45 +46,45 @@ foreach ($_SESSION['sales'] as $sale) {
 }
 
 // Display form for new sales
-echo "Add New Sale:\n";
-echo "<form method='post' action=''>\n";
-echo "Amount: $<input type='number' name='amount' step='0.01' required>\n";
-echo "Category: <select name='category' required>\n";
-echo "  <option value='Restaurant'>Restaurant</option>\n";
-echo "  <option value='Dues'>Dues</option>\n";
-echo "  <option value='Guest Passes'>Guest Passes</option>\n";
-echo "</select>\n";
-echo "Payment Type: <select name='payment_type' required>\n";
-echo "  <option value='cash'>Cash</option>\n";
-echo "  <option value='card'>Card</option>\n";
-echo "</select>\n";
-echo "<input type='submit' value='Add Sale'>\n";
-echo "</form>\n\n";
+echo "Add New Sale:<br><br>";
+echo "<form method='post' action=''>";
+echo "Amount: $<input type='number' name='amount' step='0.01' required><br><br>";
+echo "Category: <select name='category' required>";
+echo "  <option value='Restaurant'>Restaurant</option>";
+echo "  <option value='Dues'>Dues</option>";
+echo "  <option value='Guest Passes'>Guest Passes</option>";
+echo "</select><br><br>";
+echo "Payment Type: <select name='payment_type' required>";
+echo "  <option value='cash'>Cash</option>";
+echo "  <option value='card'>Card</option>";
+echo "</select><br><br>";
+echo "<input type='submit' value='Add Sale'>";
+echo "</form><br><br>";
 
 // Display all sales
-echo "All Sales:\n";
+echo "All Sales:<br>";
 foreach ($_SESSION['sales'] as $sale) {
     echo "Sale {$sale['id']}: {$sale['category']} - " . 
          ucfirst($sale['type']) . " - $" . 
-         number_format($sale['amount'], 2) . "\n";
+         number_format($sale['amount'], 2) . "<br>";
 }
 
 // Display category totals
-echo "\nCategory Totals:\n";
+echo "<br>Category Totals:<br>";
 foreach ($totals['categories'] as $category => $amount) {
-    echo "$category: $" . number_format($amount, 2) . "\n";
+    echo "$category: $" . number_format($amount, 2) . "<br>";
 }
 
 // Display payment totals
-echo "\nPayment Totals:\n";
-echo "Cash Sales: $" . number_format($totals['cash'], 2) . "\n";
-echo "Card Sales: $" . number_format($totals['card'], 2) . "\n";
-echo "Total Sales: $" . number_format($totals['total'], 2) . "\n";
+echo "<br>Payment Totals:<br>";
+echo "Cash Sales: $" . number_format($totals['cash'], 2) . "<br>";
+echo "Card Sales: $" . number_format($totals['card'], 2) . "<br>";
+echo "Total Sales: $" . number_format($totals['total'], 2) . "<br>";
 
 // Add reset button
-echo "\n<form method='post' action=''>\n";
-echo "<input type='submit' name='reset' value='Reset All Sales'>\n";
-echo "</form>\n";
+echo "<br><form method='post' action=''>";
+echo "<input type='submit' name='reset' value='Reset All Sales'>";
+echo "</form><br>";
 
 // Handle reset
 if (isset($_POST['reset'])) {
