@@ -3,4 +3,8 @@ register plan
 - track sales
 - cash card on account
 - calculate each category 
-- 
+
+
+
+- (idea) make it so the program will require a receipt number input onlt for the on account transactions
+- a way to force checking the receipts throughly and taking off on accounts manually.
