@@ -1,10 +1,14 @@
-register plan
+Register plan overview
 - I want this to collect data from the clubs systems
 - track sales
 - cash card on account
 - calculate each category 
 
+Ideas
+- user adds "." char under notes for on accounts, for tracking
+- program requires user receipt number input only for on account
+ force checking the receipts thoroughly,takes off on accounts manually.
 
-
-- (idea) make it so the program will require a receipt number input onlt for the on account transactions
-- a way to force checking the receipts throughly and taking off on accounts manually.
+Goals
+- logic for refunds
+- final output logic.
