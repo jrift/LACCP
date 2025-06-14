@@ -85,7 +85,12 @@ function parseSalesData() {
                             !preg_match('/^\d{2}-\d{2}-\d{4}$/', $possibleName) && 
                             !preg_match('/^Count:\s*\d+/', $possibleName)) {
                             $customerName = $possibleName;
-                            $payment_type = 'card';
+                            // Set payment type based on customer name
+                            if ($possibleName === '.') {
+                                $payment_type = 'account';
+                            } else {
+                                $payment_type = 'card';
+                            }
                             $i++; // Skip the name row in next iteration
                         }
                     }
@@ -143,7 +148,8 @@ $totals = [
     'departments' => [],
     'payment_types' => [
         'cash' => 0,
-        'card' => 0
+        'card' => 0,
+        'account' => 0  // Add account payment type
     ],
     'departments_by_payment' => [], // Track department totals by payment type
     'total' => 0
@@ -156,7 +162,8 @@ foreach ($sales as $sale) {
         $totals['departments'][$sale['department']] = 0;
         $totals['departments_by_payment'][$sale['department']] = [
             'cash' => 0,
-            'card' => 0
+            'card' => 0,
+            'account' => 0  // Add account payment type
         ];
     }
     $totals['departments'][$sale['department']] += $sale['price'];
@@ -187,12 +194,13 @@ echo "</table>";
 // Display department breakdown with payment types
 echo "<h3>Department Breakdown (By Payment Type)</h3>";
 echo "<table border='1' cellpadding='5'>";
-echo "<tr><th>Department</th><th>Cash</th><th>Card</th><th>Total</th></tr>";
+echo "<tr><th>Department</th><th>Cash</th><th>Card</th><th>Account</th><th>Total</th></tr>";
 foreach ($totals['departments_by_payment'] as $department => $payment_totals) {
     echo "<tr>";
     echo "<td>" . htmlspecialchars($department) . "</td>";
     echo "<td>$" . number_format($payment_totals['cash'], 2) . "</td>";
     echo "<td>$" . number_format($payment_totals['card'], 2) . "</td>";
+    echo "<td>$" . number_format($payment_totals['account'], 2) . "</td>";
     echo "<td>$" . number_format($totals['departments'][$department], 2) . "</td>";
     echo "</tr>";
 }
